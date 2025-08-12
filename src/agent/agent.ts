@@ -16,52 +16,26 @@ export class Agent {
 
     console.log("Chat with Claude (use 'ctrl-c' to quit)")
 
-    let readUserInput = true
     while (true) {
-      if (readUserInput) {
-        const userMessage: Anthropic.MessageParam = {
-          role: "user",
-          content: await this.getUserMessage(),
-        }
-        conversation.push(userMessage)
+      const userMessage: Anthropic.MessageParam = {
+        role: "user",
+        content: await this.getUserMessage(),
       }
+      conversation.push(userMessage)
 
       try {
         const result = await this.runInference(conversation)
         conversation.push(this.messageToMessageParam(result))
-
-        const toolResults: Anthropic.ContentBlockParam[] = []
 
         for (const message of result.content) {
           switch (message.type) {
             case "text":
               this.showAgentMessage(message.text)
               break
-            case "tool_use":
-              const result = await this.executeTool(
-                message.id,
-                message.name,
-                message.input,
-              )
-              toolResults.push(result)
           }
         }
-
-        if (toolResults.length === 0) {
-          readUserInput = true
-          continue
-        }
-        readUserInput = false
-        conversation.push({
-          role: "user",
-          content: toolResults,
-        })
       } catch (error) {
-        if (error instanceof BadRequestError) {
-          console.error("BadRequestError:", error.message)
-        } else {
-          console.error("Error:", error)
-        }
+        console.error("Error:", error)
       }
     }
   }
@@ -81,39 +55,6 @@ export class Agent {
       messages: conversation,
       tools: anthropicTools,
     })
-  }
-
-  private async executeTool(
-    id: string,
-    name: string,
-    input: unknown,
-  ): Promise<Anthropic.ContentBlockParam> {
-    const tool = this.tools.find((t) => t.name === name)
-    if (!tool) {
-      return {
-        tool_use_id: id,
-        type: "tool_result",
-        content: `tool not found`,
-        is_error: true,
-      }
-    }
-
-    const toolDescription = `${name}(${JSON.stringify(input)})`
-
-    try {
-      return {
-        tool_use_id: id,
-        type: "tool_result",
-        content: await tool.func(input),
-      }
-    } catch (error) {
-      return {
-        tool_use_id: id,
-        type: "tool_result",
-        content: error instanceof Error ? error.message : String(error),
-        is_error: true,
-      }
-    }
   }
 
   private messageToMessageParam(
