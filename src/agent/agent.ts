@@ -7,7 +7,6 @@ export class Agent {
   constructor(
     private client: AnthropicVertex,
     private getUserMessage: () => Promise<string>,
-    private getToolConsent: (toolDescription: string) => Promise<boolean>,
     private showAgentMessage: (message: string) => void,
     private tools: ToolDefinition[],
   ) {}
@@ -100,14 +99,6 @@ export class Agent {
     }
 
     const toolDescription = `${name}(${JSON.stringify(input)})`
-
-    if (!(await this.getToolConsent(toolDescription)))
-      return {
-        tool_use_id: id,
-        type: "tool_result",
-        content: `User did not consent to tool execution`,
-        is_error: true,
-      }
 
     try {
       return {
