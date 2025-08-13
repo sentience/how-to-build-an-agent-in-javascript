@@ -8,6 +8,7 @@ export class Agent {
     private client: AnthropicVertex,
     private getUserMessage: () => Promise<string>,
     private showAgentMessage: (message: string) => void,
+    private showToolMessage: (message: string) => void,
     private tools: ToolDefinition[],
   ) {}
 
@@ -99,6 +100,7 @@ export class Agent {
     }
 
     const toolDescription = `${name}(${JSON.stringify(input)})`
+    this.showToolMessage(toolDescription)
 
     try {
       return {

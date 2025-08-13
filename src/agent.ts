@@ -14,7 +14,13 @@ async function main() {
     region,
   })
 
-  const agent = new Agent(client, getUserMessage, showAgentMessage, tools)
+  const agent = new Agent(
+    client,
+    getUserMessage,
+    showAgentMessage,
+    showToolMessage,
+    tools,
+  )
 
   await agent.run()
 }
@@ -37,4 +43,8 @@ async function getUserMessage(): Promise<string> {
 
 function showAgentMessage(message: string): void {
   console.log(`\n\u001b[93mClaude\u001b[0m: ${message}\n`)
+}
+
+function showToolMessage(message: string): void {
+  console.log(`\n\u001b[92mTool\u001b[0m: ${message}\n`)
 }
