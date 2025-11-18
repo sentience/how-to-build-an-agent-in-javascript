@@ -15,7 +15,15 @@ async function main() {
 
   const agent = new Agent(client, getUserMessage, showAgentMessage)
 
-  await agent.run()
+  try {
+    await agent.run()
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      console.log("Exiting…")
+    } else {
+      throw error
+    }
+  }
 }
 
 async function getUserMessage(): Promise<string> {
