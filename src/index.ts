@@ -22,7 +22,15 @@ async function main() {
     tools,
   )
 
-  await agent.run()
+  try {
+    await agent.run()
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      console.log("Exiting…")
+    } else {
+      throw error
+    }
+  }
 }
 
 async function getUserMessage(): Promise<string> {
