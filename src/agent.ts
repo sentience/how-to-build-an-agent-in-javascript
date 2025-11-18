@@ -1,7 +1,7 @@
 import { AnthropicVertex } from "@anthropic-ai/vertex-sdk"
 import { Anthropic } from "@anthropic-ai/sdk"
 import { BadRequestError } from "@anthropic-ai/vertex-sdk/core/error.mjs"
-import { ToolDefinition } from "./types.js"
+import { ToolDefinition } from "./agent/types.js"
 
 export class Agent {
   constructor(
