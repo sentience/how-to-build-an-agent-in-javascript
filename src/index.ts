@@ -1,6 +1,6 @@
 import { AnthropicVertex } from "@anthropic-ai/vertex-sdk"
 import * as readline from "readline/promises"
-import { Agent } from "./agent/agent.js"
+import { Agent } from "./agent.js"
 
 const projectId = "cross-camp-ai-enablement"
 const region = "us-east5"
